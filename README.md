@@ -7,10 +7,8 @@
 Adicione a biblioteca do leitor ao projeto e importe as classes necessárias:
 
 ```java
-import com.example.uhf.DeviceAPI.IUHFURx;
-import com.example.uhf.DeviceAPI.RFIDWithUHFUrxNetwork;
-import com.example.uhf.DeviceAPI.OnSpdInventoryListener;
-import com.example.uhf.DeviceAPI.SpdInventoryData;
+import com.rscja.deviceapi.RFIDWithUHFUrxUart;
+import com.rscja.deviceapi.interfaces.IUHFURx;
 ```
 
 ---
@@ -25,11 +23,12 @@ IUHFURx mReader = RFIDWithUHFUrxNetwork.getInstance();
 
 ---
 
-### b) Conectar ao leitor via TCP/IP
+### b) Conectar ao leitor via UART
 
 ```java
-boolean conectado = mReader.init("IP_DO_LEITOR", PORTA_DO_LEITOR);
-// Exemplo: mReader.init("192.168.1.100", 6000);
+mReader = RFIDWithUHFUrxUsbToUart.getInstance();
+((RFIDWithUHFUrxUsbToUart) mReader).setUart(uartPath);
+isConnected = mReader.init(this);
 ```
 
 ---
@@ -37,77 +36,22 @@ boolean conectado = mReader.init("IP_DO_LEITOR", PORTA_DO_LEITOR);
 ### c) Configurar o listener para receber as tags lidas (incluindo antena)
 
 ```java
-mReader.setOnInventoryListener(new OnSpdInventoryListener() {
-    @Override
-    public void getInventoryData(SpdInventoryData data) {
-        String epc     = data.getEpc();
-        int rssi       = data.getRssi();
-        int count      = data.getCount();
-        int antenna    = data.getAntenna(); // Informação da antena
-
-        // Exemplo de uso:
-        System.out.println(
-            "EPC: "     + epc    +
-            " | RSSI: " + rssi   +
-            " | Count: "+ count  +
-            " | Antena: "+ antenna
-        );
-
-        // Faça o processamento necessário (exibir, salvar, etc)
-    }
-});
-```
-
----
-
-### d) Iniciar a leitura de tags
-
-```java
-mReader.startInventoryTag();
-```
-
----
-
-### e) Parar a leitura (quando necessário)
-
-```java
+mReader.setInventoryCallback(new IUHFInventoryCallback() {
+                @Override
+                public void callback(UHFTAGInfo tag) {
+                    runOnUiThread(() -> {
+                        tvResult.append("EPC: " + tag.getEPC() +
+                                        " | RSSI: " + tag.getRssi() +
+                                        " | Antena: " + tag.getAntenna() + "\n");
+                    });
+                }
+            });
 mReader.stopInventory();
 ```
-
 ---
 
-### f) Liberar recursos ao finalizar
+### c) Finalizar conexão do UR4
 
 ```java
 mReader.free();
-```
-
----
-
-## 3. Exemplo Resumido
-
-```java
-IUHFURx mReader = RFIDWithUHFUrxNetwork.getInstance();
-boolean conectado = mReader.init("192.168.1.100", 6000);
-
-if (conectado) {
-    mReader.setOnInventoryListener(new OnSpdInventoryListener() {
-        @Override
-        public void getInventoryData(SpdInventoryData data) {
-            String epc     = data.getEpc();
-            int rssi       = data.getRssi();
-            int count      = data.getCount();
-            int antenna    = data.getAntenna();
-
-            System.out.println(
-                "EPC: "     + epc    +
-                " | RSSI: " + rssi   +
-                " | Count: "+ count  +
-                " | Antena: "+ antenna
-            );
-        }
-    });
-
-    mReader.startInventoryTag();
-}
 ```
