@@ -1,4 +1,4 @@
-# Guia de Integração: Conexão TCP/IP e Leitura de Tags RFID (Chainway UR4) com Informação da Antena
+# Guia de Integração: Conexão UART e Leitura de Tags RFID (Chainway UR4) com Informação da Antena
 
 ---
 
