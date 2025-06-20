@@ -7,7 +7,7 @@
 Adicione a biblioteca do leitor ao projeto e importe as classes necessárias:
 
 ```java
-import com.rscja.deviceapi.RFIDWithUHFUrxUart;
+import com.rscja.deviceapi.RFIDWithUHFUrxUsbToUart;
 import com.rscja.deviceapi.interfaces.IUHFURx;
 ```
 
@@ -18,7 +18,7 @@ import com.rscja.deviceapi.interfaces.IUHFURx;
 ### a) Instanciar o leitor TCP/IP
 
 ```java
-IUHFURx mReader = RFIDWithUHFUrxNetwork.getInstance();
+IUHFURx mReader = RFIDWithUHFUrxUsbToUart.getInstance();
 ```
 
 ---
